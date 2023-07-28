@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "251260066941",
+    "project_id": "gojahit-7d91e",
+    "storage_bucket": "gojahit-7d91e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:251260066941:android:7dd70069e1e39dfb1aa514",
+        "android_client_info": {
+          "package_name": "com.example.go_jahit"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "251260066941-ipuk5ibleankll2a03r9aq5nkrk2d641.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAEECm4FpnqtMtWNYvqcTsyJlzE6Jv0J64"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "251260066941-ipuk5ibleankll2a03r9aq5nkrk2d641.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
