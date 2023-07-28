@@ -14,7 +14,6 @@ class _DashboardState extends State<Dashboard> {
   void _logout() async {
     try {
       await _auth.signOut();
-      print('Logout berhasil');
     } catch (e) {
       print('Error saat logout: $e');
     }
