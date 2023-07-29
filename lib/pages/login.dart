@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dashboard.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -284,7 +286,7 @@ class __userAuthMethodState extends State<_userAuthMethod> {
                   onPressed: () {
                     Navigator.of(context).pushReplacement(
                       MaterialPageRoute(
-                        builder: (context) => _signUpMethod(),
+                        builder: (context) => _signUpMethodUser(),
                       ),
                     );
                   },
@@ -393,7 +395,7 @@ class __tailorAuthMethodState extends State<_tailorAuthMethod> {
                   onPressed: () {
                     Navigator.of(context).pushReplacement(
                       MaterialPageRoute(
-                        builder: (context) => _signUpMethod(),
+                        builder: (context) => _signUpMethodUser(),
                       ),
                     );
                   },
@@ -424,15 +426,30 @@ class _singinMethod extends StatefulWidget {
 
 class __singinMethodState extends State<_singinMethod> {
   bool _obscureText = true;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   TextEditingController emailLogin = TextEditingController();
   TextEditingController passLogin = TextEditingController();
 
   Future<void> login() async {
-    UserCredential userCredential =
-        await FirebaseAuth.instance.signInWithEmailAndPassword(
-      email: emailLogin.text,
-      password: passLogin.text,
-    );
+    try {
+      String email = emailLogin.text;
+      String password = passLogin.text;
+      UserCredential userCredential =
+          await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: emailLogin.text,
+        password: passLogin.text,
+      );
+      User? user = userCredential.user;
+      if (user != null) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => Dashboard(user: user),
+          ),
+        );
+        await user.displayName;
+      }
+    } catch (e) {}
   }
 
   @override
@@ -621,17 +638,45 @@ class __singinMethodState extends State<_singinMethod> {
   }
 }
 
-class _signUpMethod extends StatefulWidget {
-  const _signUpMethod({super.key});
+class _signUpMethodUser extends StatefulWidget {
+  const _signUpMethodUser({super.key});
 
   @override
-  State<_signUpMethod> createState() => _signUpMethodState();
+  State<_signUpMethodUser> createState() => _signUpMethodUserState();
 }
 
-class _signUpMethodState extends State<_signUpMethod> {
+class _signUpMethodUserState extends State<_signUpMethodUser> {
   bool _obscureText = true;
+  FirebaseAuth _auth = FirebaseAuth.instance;
+  FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  TextEditingController _nameRegist = TextEditingController();
+  TextEditingController _emailRegist = TextEditingController();
+  TextEditingController _passRegist = TextEditingController();
+
+  void _regist() async {
+    try {
+      UserCredential userCredential =
+          await _auth.createUserWithEmailAndPassword(
+        email: _emailRegist.text,
+        password: _passRegist.text,
+      );
+      if (userCredential.user != null) {
+        await _firestore.collection('users').doc(userCredential.user!.uid).set({
+          'nama': _nameRegist.text,
+          'email': _emailRegist.text,
+          'password': _passRegist.text,
+          'role': 'user',
+        });
+      }
+    } catch (e) {
+      print("Error saat mendaftar : ${e.toString()}");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    FirebaseAuth _auth = FirebaseAuth.instance;
+
     return Scaffold(
         body: Stack(
       children: [
@@ -700,6 +745,7 @@ class _signUpMethodState extends State<_signUpMethod> {
                     height: 10,
                   ),
                   TextFormField(
+                    controller: _nameRegist,
                     keyboardType: TextInputType.text,
                     decoration: InputDecoration(
                       hintText: 'Your name',
@@ -730,6 +776,7 @@ class _signUpMethodState extends State<_signUpMethod> {
                     height: 10,
                   ),
                   TextFormField(
+                    controller: _emailRegist,
                     keyboardType: TextInputType.emailAddress,
                     decoration: InputDecoration(
                       hintText: 'example@email.com',
@@ -760,6 +807,7 @@ class _signUpMethodState extends State<_signUpMethod> {
                     height: 10,
                   ),
                   TextFormField(
+                    controller: _passRegist,
                     obscureText: _obscureText,
                     decoration: InputDecoration(
                         filled: true,
@@ -791,7 +839,9 @@ class _signUpMethodState extends State<_signUpMethod> {
                     child: Container(
                       width: 400,
                       child: ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          _regist();
+                        },
                         style: ElevatedButton.styleFrom(
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10.0),
@@ -803,33 +853,6 @@ class _signUpMethodState extends State<_signUpMethod> {
                       ),
                     ),
                   ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  Center(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Text(
-                          "Don't have account?",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
-                          ),
-                        ),
-                        TextButton(
-                            onPressed: () {},
-                            child: Text(
-                              "Sign up",
-                              style: TextStyle(
-                                color: Colors.blue,
-                                fontSize: 20,
-                              ),
-                            ))
-                      ],
-                    ),
-                  )
                 ],
               ),
             )

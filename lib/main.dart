@@ -3,6 +3,7 @@ import 'package:go_jahit/pages/dashboard.dart';
 import 'package:go_jahit/pages/login.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,7 +17,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Checker(),
+      home: SplashScreen(),
       debugShowCheckedModeBanner: false,
     );
   }
@@ -63,27 +64,6 @@ class _SplashScreenState extends State<SplashScreen> {
           child: Image.asset('assets/logo.png'),
         ),
       ),
-    );
-  }
-}
-
-class Checker extends StatelessWidget {
-  const Checker({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return StreamBuilder<User?>(
-      stream: FirebaseAuth.instance.authStateChanges(),
-      builder: (context, AsyncSnapshot<User?> snapshot) {
-        if (snapshot.hasData && snapshot.data != null) {
-          return const Dashboard();
-        } else if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        }
-        return const Login();
-      },
     );
   }
 }
