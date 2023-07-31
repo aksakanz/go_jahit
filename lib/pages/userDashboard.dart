@@ -13,6 +13,37 @@ class UserDashboard extends StatefulWidget {
 }
 
 class _UserDashboardState extends State<UserDashboard> {
+  User? user;
+  String? nama;
+
+  @override
+  void initState() {
+    super.initState();
+    user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      _fetchUserDetail();
+    }
+  }
+
+  Future<void> _fetchUserDetail() async {
+    try {
+      DocumentSnapshot<Map<String, dynamic>> userDocSnapshot =
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(user!.uid)
+              .get();
+      if (userDocSnapshot.exists) {
+        setState(() {
+          nama = userDocSnapshot.data()!['nama'];
+        });
+      } else {
+        print('Dokumen tidak ditemukan');
+      }
+    } catch (e) {
+      print('Error saat mengambil detail pengguna : $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -65,15 +96,14 @@ class _UserDashboardState extends State<UserDashboard> {
                             left: 20,
                             top: 5,
                           ),
-                          child: Text(
-                            FirebaseAuth.instance.currentUser!.displayName ??
-                                'Nama perlu ditinjau pada profile!',
-                            style: TextStyle(
-                              fontSize: 15,
-                              color: Colors.red,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                          child: nama != null
+                              ? Text('$nama')
+                              : Text(
+                                  'Nama tidak valid',
+                                  style: TextStyle(
+                                    color: Colors.red,
+                                  ),
+                                ),
                         ),
                       ],
                     ),

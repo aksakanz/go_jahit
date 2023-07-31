@@ -54,7 +54,7 @@ class _DashboardState extends State<Dashboard> {
     if (role == 'user') {
       return UserDashboard();
     } else {
-      return TailorDashboard();
+      return UserDashboard();
     }
   }
 }

@@ -395,7 +395,7 @@ class __tailorAuthMethodState extends State<_tailorAuthMethod> {
                   onPressed: () {
                     Navigator.of(context).pushReplacement(
                       MaterialPageRoute(
-                        builder: (context) => _signUpMethodUser(),
+                        builder: (context) => _signUpMethodTailor(),
                       ),
                     );
                   },
@@ -492,13 +492,6 @@ class __singinMethodState extends State<_singinMethod> {
                   Image.asset('assets/logo.png'),
                   SizedBox(
                     height: 10,
-                  ),
-                  Text(
-                    "Pengguna",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                    ),
                   ),
                   SizedBox(
                     height: 40,
@@ -617,7 +610,14 @@ class __singinMethodState extends State<_singinMethod> {
                           ),
                         ),
                         TextButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => _signUpMethodUser(),
+                                ),
+                              );
+                            },
                             child: Text(
                               "Sign up",
                               style: TextStyle(
@@ -628,6 +628,452 @@ class __singinMethodState extends State<_singinMethod> {
                       ],
                     ),
                   )
+                ],
+              ),
+            )
+          ],
+        ),
+      ],
+    ));
+  }
+}
+
+class _singinMethodTailor extends StatefulWidget {
+  const _singinMethodTailor({super.key});
+
+  @override
+  State<_singinMethodTailor> createState() => __singinMethodTailorState();
+}
+
+class __singinMethodTailorState extends State<_singinMethodTailor> {
+  bool _obscureText = true;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  TextEditingController emailLogin = TextEditingController();
+  TextEditingController passLogin = TextEditingController();
+
+  Future<void> login() async {
+    try {
+      String email = emailLogin.text;
+      String password = passLogin.text;
+      UserCredential userCredential =
+          await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: emailLogin.text,
+        password: passLogin.text,
+      );
+      User? user = userCredential.user;
+      if (user != null) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => Dashboard(user: user),
+          ),
+        );
+        await user.displayName;
+      }
+    } catch (e) {}
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        body: Stack(
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage('assets/bg.png'),
+              fit: BoxFit.cover,
+            ),
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.fromLTRB(10, 30, 0, 0),
+          child: IconButton(
+            onPressed: () {
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(
+                  builder: (context) => _selectRole(),
+                ),
+              );
+            },
+            icon: Icon(Icons.chevron_left),
+            color: Colors.white,
+            iconSize: 40,
+          ),
+        ),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: 100,
+                  ),
+                  Image.asset('assets/logo.png'),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  SizedBox(
+                    height: 40,
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              margin: EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Email address",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 19,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  TextFormField(
+                    controller: emailLogin,
+                    decoration: InputDecoration(
+                      hintText: 'example@email.com',
+                      filled: true,
+                      fillColor: Colors.white,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ),
+                    cursorColor: Colors.black,
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Text(
+                    "Password",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 19,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  TextFormField(
+                    controller: passLogin,
+                    obscureText: _obscureText,
+                    decoration: InputDecoration(
+                        filled: true,
+                        fillColor: Colors.white,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Colors.grey,
+                          ),
+                        ),
+                        suffixIcon: IconButton(
+                          icon: _obscureText
+                              ? Icon(Icons.visibility_off)
+                              : Icon(Icons.visibility),
+                          onPressed: () {
+                            setState(() {
+                              _obscureText = !_obscureText;
+                            });
+                          },
+                        )),
+                    cursorColor: Colors.black,
+                  ),
+                  SizedBox(
+                    height: 40,
+                  ),
+                  Center(
+                    child: Container(
+                      width: 400,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          if (emailLogin.text.isNotEmpty &&
+                              passLogin.text.length > 6) {
+                            login();
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                          primary: Colors.green,
+                          minimumSize: Size(100, 50),
+                        ),
+                        child: Text("Login"),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Center(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          "Don't have account?",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                          ),
+                        ),
+                        TextButton(
+                            onPressed: () {
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => _signUpMethodTailor(),
+                                ),
+                              );
+                            },
+                            child: Text(
+                              "Sign up",
+                              style: TextStyle(
+                                color: Colors.blue,
+                                fontSize: 20,
+                              ),
+                            ))
+                      ],
+                    ),
+                  )
+                ],
+              ),
+            )
+          ],
+        ),
+      ],
+    ));
+  }
+}
+
+class _signUpMethodTailor extends StatefulWidget {
+  const _signUpMethodTailor({super.key});
+
+  @override
+  State<_signUpMethodTailor> createState() => _signUpMethodTailorState();
+}
+
+class _signUpMethodTailorState extends State<_signUpMethodTailor> {
+  bool _obscureText = true;
+  FirebaseAuth _auth = FirebaseAuth.instance;
+  FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  TextEditingController _nameRegist = TextEditingController();
+  TextEditingController _emailRegist = TextEditingController();
+  TextEditingController _passRegist = TextEditingController();
+
+  void _regist() async {
+    try {
+      UserCredential userCredential =
+          await _auth.createUserWithEmailAndPassword(
+        email: _emailRegist.text,
+        password: _passRegist.text,
+      );
+      if (userCredential.user != null) {
+        await _firestore.collection('users').doc(userCredential.user!.uid).set({
+          'nama': _nameRegist.text,
+          'email': _emailRegist.text,
+          'password': _passRegist.text,
+          'role': 'tailor',
+        });
+      }
+    } catch (e) {
+      print("Error saat mendaftar : ${e.toString()}");
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    FirebaseAuth _auth = FirebaseAuth.instance;
+
+    return Scaffold(
+        body: Stack(
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage('assets/bg.png'),
+              fit: BoxFit.cover,
+            ),
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.fromLTRB(10, 30, 0, 0),
+          child: IconButton(
+            onPressed: () {
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(
+                  builder: (context) => _selectRole(),
+                ),
+              );
+            },
+            icon: Icon(Icons.chevron_left),
+            color: Colors.white,
+            iconSize: 40,
+          ),
+        ),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: 100,
+                  ),
+                  Image.asset('assets/logo.png'),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Text(
+                    "Penjahit",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 40,
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              margin: EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Name",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 19,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  TextFormField(
+                    controller: _nameRegist,
+                    keyboardType: TextInputType.text,
+                    decoration: InputDecoration(
+                      hintText: 'Your name',
+                      filled: true,
+                      fillColor: Colors.white,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ),
+                    cursorColor: Colors.black,
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Text(
+                    "Email address",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 19,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  TextFormField(
+                    controller: _emailRegist,
+                    keyboardType: TextInputType.emailAddress,
+                    decoration: InputDecoration(
+                      hintText: 'example@email.com',
+                      filled: true,
+                      fillColor: Colors.white,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ),
+                    cursorColor: Colors.black,
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Text(
+                    "Password",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 19,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  TextFormField(
+                    controller: _passRegist,
+                    obscureText: _obscureText,
+                    decoration: InputDecoration(
+                        filled: true,
+                        fillColor: Colors.white,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Colors.grey,
+                          ),
+                        ),
+                        suffixIcon: IconButton(
+                          icon: _obscureText
+                              ? Icon(Icons.visibility_off)
+                              : Icon(Icons.visibility),
+                          onPressed: () {
+                            setState(() {
+                              _obscureText = !_obscureText;
+                            });
+                          },
+                        )),
+                    cursorColor: Colors.black,
+                  ),
+                  SizedBox(
+                    height: 40,
+                  ),
+                  Center(
+                    child: Container(
+                      width: 400,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          _regist();
+                        },
+                        style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                          primary: Colors.green,
+                          minimumSize: Size(100, 50),
+                        ),
+                        child: Text("Sign up"),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             )
