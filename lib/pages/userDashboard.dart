@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:go_jahit/pages/takeOrder.dart';
 import 'package:go_jahit/pages/userProfile.dart';
 
 class UserDashboard extends StatefulWidget {
@@ -130,7 +131,11 @@ class _UserDashboardState extends State<UserDashboard> {
           ),
           InkWell(
             onTap: () {
-              print("eh kepencet");
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(
+                  builder: (context) => UserProfile(),
+                ),
+              );
             },
             child: Container(
               margin: EdgeInsets.fromLTRB(293, 63, 0, 0),
@@ -680,7 +685,13 @@ class _UserDashboardState extends State<UserDashboard> {
                             color: Colors.black,
                             size: 35,
                           ),
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.of(context).pushReplacement(
+                              MaterialPageRoute(
+                                builder: (context) => TakeOrder(),
+                              ),
+                            );
+                          },
                         ),
                         SizedBox(
                           width: 55,
@@ -706,6 +717,22 @@ class _UserDashboardState extends State<UserDashboard> {
               ),
             ),
           ),
+          Container(
+              height: 20,
+              width: 20,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.red,
+              ),
+              margin: EdgeInsets.fromLTRB(170, 660, 0, 0),
+              child: Center(
+                child: Text(
+                  '1',
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
+                ),
+              )),
         ],
       ),
     );

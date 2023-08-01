@@ -272,6 +272,22 @@ class _EditProfileState extends State<EditProfile> {
               ),
             ),
           ),
+          Container(
+              height: 20,
+              width: 20,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.red,
+              ),
+              margin: EdgeInsets.fromLTRB(170, 660, 0, 0),
+              child: Center(
+                child: Text(
+                  '1',
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
+                ),
+              )),
         ],
       ),
     );

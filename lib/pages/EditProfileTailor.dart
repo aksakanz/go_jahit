@@ -1,21 +1,26 @@
 import 'package:flutter/material.dart';
-import 'package:go_jahit/pages/EditProfile.dart';
-import 'package:go_jahit/pages/login.dart';
-import 'package:go_jahit/pages/takeOrder.dart';
+import 'package:go_jahit/pages/receiveOrder.dart';
+import 'package:go_jahit/pages/tailorDashboard.dart';
+import 'package:go_jahit/pages/tailorProfile.dart';
 import 'package:go_jahit/pages/userDashboard.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:go_jahit/pages/userProfile.dart';
 
-class UserProfile extends StatefulWidget {
-  const UserProfile({super.key});
+class EditProfileTailor extends StatefulWidget {
+  const EditProfileTailor({super.key});
 
   @override
-  State<UserProfile> createState() => _UserProfileState();
+  State<EditProfileTailor> createState() => _EditProfileTailorState();
 }
 
-class _UserProfileState extends State<UserProfile> {
+class _EditProfileTailorState extends State<EditProfileTailor> {
   User? user;
   Map<String, dynamic>? _userData;
+  TextEditingController nama = TextEditingController();
+  TextEditingController telp = TextEditingController();
+  TextEditingController jk = TextEditingController();
+  TextEditingController alamat = TextEditingController();
 
   @override
   void initState() {
@@ -37,6 +42,10 @@ class _UserProfileState extends State<UserProfile> {
       if (userDocSnapshot.exists) {
         setState(() {
           _userData = userDocSnapshot.data();
+          nama.text = _userData!['nama'] ?? '';
+          telp.text = _userData!['telp'] ?? '';
+          jk.text = _userData!['jk'] ?? '';
+          alamat.text = _userData!['alamat'] ?? '';
         });
       } else {
         print('Dokumen pengguna tidak ditemukan');
@@ -46,19 +55,20 @@ class _UserProfileState extends State<UserProfile> {
     }
   }
 
-  void logout() async {
-    FirebaseAuth _auth = FirebaseAuth.instance;
-
+  Future<void> _updateUserDetail() async {
     try {
-      await _auth.signOut();
-      print("Berhasil Logout");
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (context) => Login(),
-        ),
-      );
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user!.uid)
+          .update({
+        'nama': nama.text.trim(),
+        'telp': telp.text.trim(),
+        'jk': jk.text.trim(),
+        'alamat': alamat.text.trim(),
+      });
     } catch (e) {
-      print("Error saat logout: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error saat memperbaharui: $e')));
     }
   }
 
@@ -97,9 +107,7 @@ class _UserProfileState extends State<UserProfile> {
                       children: [
                         Center(
                           child: InkWell(
-                            onTap: () {
-                              print("eh kepencet");
-                            },
+                            onTap: () {},
                             child: Container(
                               margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
                               width: 65,
@@ -114,11 +122,21 @@ class _UserProfileState extends State<UserProfile> {
                         ),
                         ListTile(
                           leading: Icon(Icons.person),
-                          title: Text('${_userData!['nama']}'),
+                          title: TextFormField(
+                            controller: nama,
+                            decoration: InputDecoration(
+                              hintText: '${_userData!['nama']}',
+                            ),
+                          ),
                         ),
                         ListTile(
                           leading: Icon(Icons.phone),
-                          title: Text('${_userData!['telp']}'),
+                          title: TextFormField(
+                            controller: telp,
+                            decoration: InputDecoration(
+                              hintText: "${_userData!['telp']}",
+                            ),
+                          ),
                         ),
                         ListTile(
                           leading: Icon(Icons.email),
@@ -127,11 +145,21 @@ class _UserProfileState extends State<UserProfile> {
                         ),
                         ListTile(
                           leading: Icon(Icons.male),
-                          title: Text('${_userData!['jk']}'),
+                          title: TextFormField(
+                            controller: jk,
+                            decoration: InputDecoration(
+                              hintText: '${_userData!['jk']}',
+                            ),
+                          ),
                         ),
                         ListTile(
                           leading: Icon(Icons.location_city),
-                          title: Text('${_userData!['alamat']}'),
+                          title: TextFormField(
+                            controller: alamat,
+                            decoration: InputDecoration(
+                              hintText: '${_userData!['alamatsimpel']}',
+                            ),
+                          ),
                         ),
                         SizedBox(
                           height: 10,
@@ -142,9 +170,10 @@ class _UserProfileState extends State<UserProfile> {
                           children: [
                             ElevatedButton(
                               onPressed: () {
+                                _updateUserDetail();
                                 Navigator.of(context).pushReplacement(
                                   MaterialPageRoute(
-                                    builder: (context) => EditProfile(),
+                                    builder: (context) => UserProfile(),
                                   ),
                                 );
                               },
@@ -155,14 +184,18 @@ class _UserProfileState extends State<UserProfile> {
                                 primary: Colors.green,
                                 minimumSize: Size(100, 50),
                               ),
-                              child: Text("Edit Profile"),
+                              child: Text("Save"),
                             ),
                             SizedBox(
                               width: 10,
                             ),
                             ElevatedButton(
                               onPressed: () {
-                                logout();
+                                Navigator.of(context).pushReplacement(
+                                  MaterialPageRoute(
+                                    builder: (context) => TailorProfile(),
+                                  ),
+                                );
                               },
                               style: ElevatedButton.styleFrom(
                                 shape: RoundedRectangleBorder(
@@ -171,7 +204,7 @@ class _UserProfileState extends State<UserProfile> {
                                 primary: Colors.red,
                                 minimumSize: Size(100, 50),
                               ),
-                              child: Text("Logout"),
+                              child: Text("Cancel"),
                             ),
                           ],
                         )
@@ -208,7 +241,7 @@ class _UserProfileState extends State<UserProfile> {
                           onPressed: () {
                             Navigator.of(context).pushReplacement(
                               MaterialPageRoute(
-                                builder: (context) => UserDashboard(),
+                                builder: (context) => TailorDashboard(),
                               ),
                             );
                           },
@@ -225,7 +258,7 @@ class _UserProfileState extends State<UserProfile> {
                           onPressed: () {
                             Navigator.of(context).pushReplacement(
                               MaterialPageRoute(
-                                builder: (context) => TakeOrder(),
+                                builder: (context) => ReceiveOrder(),
                               ),
                             );
                           },
@@ -242,7 +275,7 @@ class _UserProfileState extends State<UserProfile> {
                           onPressed: () {
                             Navigator.of(context).pushReplacement(
                               MaterialPageRoute(
-                                builder: (context) => UserProfile(),
+                                builder: (context) => TailorProfile(),
                               ),
                             );
                           },
@@ -254,22 +287,6 @@ class _UserProfileState extends State<UserProfile> {
               ),
             ),
           ),
-          Container(
-              height: 20,
-              width: 20,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.red,
-              ),
-              margin: EdgeInsets.fromLTRB(170, 660, 0, 0),
-              child: Center(
-                child: Text(
-                  '1',
-                  style: TextStyle(
-                    color: Colors.white,
-                  ),
-                ),
-              )),
         ],
       ),
     );

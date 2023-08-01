@@ -1,19 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:go_jahit/pages/EditProfile.dart';
 import 'package:go_jahit/pages/login.dart';
+import 'package:go_jahit/pages/receiveOrder.dart';
+import 'package:go_jahit/pages/tailorDashboard.dart';
 import 'package:go_jahit/pages/takeOrder.dart';
 import 'package:go_jahit/pages/userDashboard.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class UserProfile extends StatefulWidget {
-  const UserProfile({super.key});
+import 'EditProfileTailor.dart';
+
+class TailorProfile extends StatefulWidget {
+  const TailorProfile({super.key});
 
   @override
-  State<UserProfile> createState() => _UserProfileState();
+  State<TailorProfile> createState() => _TailorProfileState();
 }
 
-class _UserProfileState extends State<UserProfile> {
+class _TailorProfileState extends State<TailorProfile> {
   User? user;
   Map<String, dynamic>? _userData;
 
@@ -144,7 +148,7 @@ class _UserProfileState extends State<UserProfile> {
                               onPressed: () {
                                 Navigator.of(context).pushReplacement(
                                   MaterialPageRoute(
-                                    builder: (context) => EditProfile(),
+                                    builder: (context) => EditProfileTailor(),
                                   ),
                                 );
                               },
@@ -208,7 +212,7 @@ class _UserProfileState extends State<UserProfile> {
                           onPressed: () {
                             Navigator.of(context).pushReplacement(
                               MaterialPageRoute(
-                                builder: (context) => UserDashboard(),
+                                builder: (context) => TailorDashboard(),
                               ),
                             );
                           },
@@ -225,7 +229,7 @@ class _UserProfileState extends State<UserProfile> {
                           onPressed: () {
                             Navigator.of(context).pushReplacement(
                               MaterialPageRoute(
-                                builder: (context) => TakeOrder(),
+                                builder: (context) => ReceiveOrder(),
                               ),
                             );
                           },
@@ -242,7 +246,7 @@ class _UserProfileState extends State<UserProfile> {
                           onPressed: () {
                             Navigator.of(context).pushReplacement(
                               MaterialPageRoute(
-                                builder: (context) => UserProfile(),
+                                builder: (context) => TailorProfile(),
                               ),
                             );
                           },
@@ -254,22 +258,6 @@ class _UserProfileState extends State<UserProfile> {
               ),
             ),
           ),
-          Container(
-              height: 20,
-              width: 20,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.red,
-              ),
-              margin: EdgeInsets.fromLTRB(170, 660, 0, 0),
-              child: Center(
-                child: Text(
-                  '1',
-                  style: TextStyle(
-                    color: Colors.white,
-                  ),
-                ),
-              )),
         ],
       ),
     );
